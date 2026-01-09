@@ -3,8 +3,8 @@ library(plyr)
 library(gridExtra)
 library(magrittr)
 library(tidyr)
-library(raster)
-library(OpenImageR)
+# library(raster)  # Not used, requires terra/GDAL
+# library(OpenImageR)  # Not used
 library(ggpubr)
 library(grid)
 library(wesanderson)

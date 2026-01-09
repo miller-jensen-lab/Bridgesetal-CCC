@@ -1,0 +1,22 @@
+# Data and outputs (large files, regenerate with scripts)
+tmp/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+main.py
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+
+# IDE/Editor
+.claude/
+.mcp.json
+.vscode/
+.idea/
+
+# OS
+.DS_Store
