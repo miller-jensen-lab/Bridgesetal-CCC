@@ -11,6 +11,7 @@ main.py
 .Rhistory
 .RData
 .Rproj.user/
+rv/
 
 # IDE/Editor
 .claude/

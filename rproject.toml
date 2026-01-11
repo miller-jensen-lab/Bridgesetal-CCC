@@ -1,0 +1,43 @@
+[project]
+name = "Bridgesetal-CCC"
+r_version = "4.5"
+
+# Repositories
+# NOTE: rv currently only works with R Framework (CRAN binaries)
+# Homebrew R users should use: just install-r (uses install_packages.R)
+# force_source = true is not yet functional: https://github.com/a2-ai/rv/issues
+repositories = [
+    { alias = "CRAN", url = "https://cloud.r-project.org" },
+]
+
+# Dependencies for Fig6 DBiT-seq analysis
+dependencies = [
+    # Core tidyverse
+    "tidyverse",
+    "magrittr",
+
+    # Data I/O
+    "rio",
+    "janitor",
+    "openxlsx",
+    "readxl",
+    "data.table",
+
+    # Plotting
+    "ggplot2",
+    "ggpubr",
+    "gridExtra",
+    "wesanderson",
+    "RColorBrewer",
+
+    # Seurat for spatial analysis
+    "Seurat",
+
+    # Other
+    "plyr",
+    "Matrix",
+    "remotes",
+
+    # SeuratData - install separately due to library path issues
+    # { name = "SeuratData", git = "https://github.com/satijalab/seurat-data.git", branch = "main" },
+]
