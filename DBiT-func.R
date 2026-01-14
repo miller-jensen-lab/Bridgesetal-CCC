@@ -43,13 +43,16 @@ get_gene_UMI_count <- function(file_dir, csv_name) {
   return(to.return)
 }
 
-generate_Seurat_obj <- function(file_dir, sample.name, tsv.name, cluster.res, sample, sept = "", transp = TRUE) {
-  # read in per pixel counts 
+generate_Seurat_obj <- function(file_dir, sample.name, tsv.name, cluster.res, sample, sept = "", transp = TRUE, pos_file = "position.txt") {
+  # read in per pixel counts
   if (transp) {
     expr_sample <-t(as.matrix(read.table(file = file.path(file_dir, tsv.name))))
   } else {
-    expr_sample <-as.matrix(read.table(file = file.path(file_dir, tsv.name), sep=',', header=TRUE))
-    expr_sample <- expr_sample %>% as.data.frame() %>% column_to_rownames(var = "X")
+    # Determine separator (default to tab if sept is empty or tab)
+    sep_char <- if (sept == "" || sept == "\t") "\t" else sept
+    expr_sample <- as.matrix(read.table(file = file.path(file_dir, tsv.name),
+                                         sep = sep_char, header = TRUE, row.names = 1,
+                                         check.names = FALSE))
   }
   
   if (startsWith(colnames(expr_sample)[1], 'X')) {
@@ -61,7 +64,7 @@ generate_Seurat_obj <- function(file_dir, sample.name, tsv.name, cluster.res, sa
   expr_sample <- expr_sample[!grepl("^ENSMUS", rownames(expr_sample)), ]
   expr_sample <- expr_sample[!grepl("^RNA", rownames(expr_sample)), ]
   
-  pos_sample <- fread(file.path(file_dir,"position.txt"),header = F) %>% t
+  pos_sample <- fread(file.path(file_dir, pos_file), header = F) %>% t
   # pos_sample = pos_sample[!is.na(pos_sample),]
   pos_sample <- rbind(pos_sample, c("1x1"))
   pos_sample <- rbind(pos_sample, c("50x50"))
