@@ -184,11 +184,11 @@ mac.treg <- tibble('ctrl' = ctrl.mac.treg$corr,
                    'comb' = comb.mac.treg$corr)
 openxlsx::write.xlsx(mac.treg, file.path(OUTPUT_DIR, "mac-Treg_corr.xlsx"))
 
-# Macrophage-CD8 T cell correlation (10x10 grid, 1000 bootstrap reps)
+# Macrophage-CD8 T cell correlation (20x20 grid, 1000 bootstrap reps)
 cat("  Computing Mac-CD8 correlations...\n")
-ctrl.mac.cd8 <- corr_CV(ctrl.obj, 'Cluster1', 'Cluster3', 10, rep = 1000)
-icb.mac.cd8 <- corr_CV(icb.obj, 'Cluster1', 'Cluster3', 10, rep = 1000)
-comb.mac.cd8 <- corr_CV(comb.obj, 'Cluster1', 'Cluster3', 10, rep = 1000)
+ctrl.mac.cd8 <- corr_CV(ctrl.obj, 'Cluster1', 'Cluster3', 20, rep = 1000)
+icb.mac.cd8 <- corr_CV(icb.obj, 'Cluster1', 'Cluster3', 20, rep = 1000)
+comb.mac.cd8 <- corr_CV(comb.obj, 'Cluster1', 'Cluster3', 20, rep = 1000)
 mac.cd8 <- tibble('ctrl' = ctrl.mac.cd8$corr,
                   'icb' = icb.mac.cd8$corr,
                   'comb' = comb.mac.cd8$corr)
@@ -205,19 +205,33 @@ cd8.treg <- tibble('ctrl' = ctrl.cd8.treg$corr,
 openxlsx::write.xlsx(cd8.treg, file.path(OUTPUT_DIR, "CD8-Treg_corr.xlsx"))
 
 # ============================================================================
-# Three-feature correlation: Mac-CD8 vs Mac-Treg (combination treatment only)
+# Three-feature correlation: Mac-CD8 vs Mac-Treg (all conditions)
 # ============================================================================
-cat("  Computing 3-feature correlations (comb only)...\n")
-mac.cd8.treg <- corr_CV(comb.obj, 'Cluster1', 'Cluster3', 20, rep = 1000, feature3 = 'Cluster4')
-cat(sprintf("  Correlation test: r = %.3f, p = %.2e\n",
-            cor.test(mac.cd8.treg$corr, mac.cd8.treg$corr.feature3)$estimate,
-            cor.test(mac.cd8.treg$corr, mac.cd8.treg$corr.feature3)$p.value))
-openxlsx::write.xlsx(mac.cd8.treg, file.path(OUTPUT_DIR, "3-feature_corr.xlsx"))
+cat("  Computing 3-feature correlations (ctrl)...\n")
+ctrl.mac.cd8.treg <- corr_CV(ctrl.obj, 'Cluster1', 'Cluster3', 20, rep = 1000, feature3 = 'Cluster4')
+cat(sprintf("    ctrl: r = %.3f, p = %.2e\n",
+            cor.test(ctrl.mac.cd8.treg$corr, ctrl.mac.cd8.treg$corr.feature3)$estimate,
+            cor.test(ctrl.mac.cd8.treg$corr, ctrl.mac.cd8.treg$corr.feature3)$p.value))
+openxlsx::write.xlsx(ctrl.mac.cd8.treg, file.path(OUTPUT_DIR, "3-feature_corr_ctrl.xlsx"))
 
-# Plot Mac-CD8 vs Mac-Treg correlation
+cat("  Computing 3-feature correlations (icb)...\n")
+icb.mac.cd8.treg <- corr_CV(icb.obj, 'Cluster1', 'Cluster3', 20, rep = 1000, feature3 = 'Cluster4')
+cat(sprintf("    icb:  r = %.3f, p = %.2e\n",
+            cor.test(icb.mac.cd8.treg$corr, icb.mac.cd8.treg$corr.feature3)$estimate,
+            cor.test(icb.mac.cd8.treg$corr, icb.mac.cd8.treg$corr.feature3)$p.value))
+openxlsx::write.xlsx(icb.mac.cd8.treg, file.path(OUTPUT_DIR, "3-feature_corr_icb.xlsx"))
+
+cat("  Computing 3-feature correlations (comb)...\n")
+comb.mac.cd8.treg <- corr_CV(comb.obj, 'Cluster1', 'Cluster3', 20, rep = 1000, feature3 = 'Cluster4')
+cat(sprintf("    comb: r = %.3f, p = %.2e\n",
+            cor.test(comb.mac.cd8.treg$corr, comb.mac.cd8.treg$corr.feature3)$estimate,
+            cor.test(comb.mac.cd8.treg$corr, comb.mac.cd8.treg$corr.feature3)$p.value))
+openxlsx::write.xlsx(comb.mac.cd8.treg, file.path(OUTPUT_DIR, "3-feature_corr_comb.xlsx"))
+
+# Plot Mac-CD8 vs Mac-Treg correlation (comb only, for backward compatibility)
 pdf(file.path(OUTPUT_DIR, "Fig6_mac_cd8_vs_treg_corr.pdf"), width = 6, height = 6)
 print(
-  mac.cd8.treg %>%
+  comb.mac.cd8.treg %>%
     ggplot(aes(x = corr, y = corr.feature3)) +
     geom_point(alpha = 0.5) +
     theme_bw() +
